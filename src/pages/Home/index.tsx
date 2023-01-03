@@ -1,34 +1,48 @@
-import { useState } from 'react'
-import styles from "./home.module.scss"
-import { ReactComponent as Logo} from "assets/logo.svg"
-import Header from "components/Header"
-import Search from "components/Search"
-import Filters from 'components/Filters'
-import Order from 'components/Order'
-import Itens from 'components/Itens'
+import carte from 'data/carte.json';
+import { useEffect, useState } from 'react';
+import styles from './home.module.scss';
+import stylesGlobal from 'styles/_global.module.scss';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home(){
-    const [ search, setSearch ] = useState("")
-    const [ filter, setFilter ] = useState<number | null>(null)
-    const [ order, setOrder] = useState("")
+	const [recommendedDishes, setRecommendedDishes] =  useState(carte);
+	const navigate = useNavigate();
 
-    return(
-        <main>
-            <nav className={styles.menu}>
-                <Logo />
-            </nav>
-            <Header/>
-            <section className={styles.carte}>
-                <h3 className={styles.carte__title}>Menu</h3>
-                <Search search={search} setSearch ={ setSearch }/>
-                <div className={styles.carte__filters}>
-                    <Filters filter = {filter} setFilter= {setFilter}/>
-                    <Order order={order} setOrder= {setOrder} />
-                </div>
-                <Itens />
-       
-            </section>
-            
-        </main>
-    )
+	function randomDishes(){
+		const recommendedDishes = [...carte];
+		setRecommendedDishes(recommendedDishes.sort(() => 0.5 - Math.random()).splice(0,3));
+	}
+
+	function redirectToDetails(dish: typeof carte[0]){
+		navigate(`/dish/${dish.id}`, { state: {dish}, replace:true });
+
+	}
+
+	useEffect(()=>{
+		randomDishes();
+	},[]);
+    
+	return(
+		<section>
+			<h3 className={stylesGlobal.titulo}>Kitchen recommendations</h3>
+			<div className={styles.recomendados}>
+				{recommendedDishes.map(item => (
+					<div key={item.id} className={styles.recomendado}>
+						<div className={styles.recomendado__imagem}>
+							<img src={item.photo} alt={item.title} />
+						</div>
+						<button onClick={()=> {redirectToDetails(item);}} className={styles.recomendado__botao}>See more</button>
+					</div>
+				))}
+			</div>
+			<h3 className={stylesGlobal.titulo}>Our home</h3>
+			<div className={styles.nossaCasa}>
+				<img src='/assets/nossa_casa.png' alt="Casa do Alexoni" />
+				<div className={styles.nossaCasa__endereco}>
+                    Rua Indaiatuba, 3185 <br /><br /> Do Salto - SC
+				</div>
+
+			</div>
+		</section>
+	);
 }

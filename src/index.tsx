@@ -1,15 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import "normalize.css"
-import Home from './pages/Home';
+import 'normalize.css';
+import Router from './routes';
+
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <React.StrictMode>
-    <Home />
-  </React.StrictMode>
+	<React.StrictMode>
+		<Router/>
+	</React.StrictMode>
 );
 
